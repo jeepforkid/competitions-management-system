@@ -10,9 +10,6 @@ module.exports = {
     // رابط قاعدة البيانات
     dbUrl: process.env.DATABASE_URL,
     
-    // المفتاح السري للجلسات
-    sessionSecret: process.env.SESSION_SECRET,
-    
     // إعدادات قاعدة البيانات
     database: {
         host: process.env.DB_HOST || 'localhost',
