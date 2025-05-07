@@ -52,8 +52,13 @@ Built by https://www.blackbox.ai
 
 بعد اكتمال النشر، قم بإنشاء المستخدم الأول (المسؤول) عن طريق:
 
-1. افتح موجه الأوامر في Render.com للتطبيق
-2. قم بإنشاء ملف مؤقت باسم `createAdmin.js` بالمحتوى التالي:
+1. في لوحة تحكم Render.com، اذهب إلى Web Service الخاص بالتطبيق
+2. انقر على زر "Shell" في القائمة العلوية
+3. في نافذة Shell، قم بإنشاء وتحرير الملف باستخدام الأمر التالي:
+   ```bash
+   nano createAdmin.js
+   ```
+4. انسخ والصق المحتوى التالي في المحرر (استخدم CTRL+SHIFT+V للصق):
    ```javascript
    require('dotenv').config();
    const { User } = require('./models');
