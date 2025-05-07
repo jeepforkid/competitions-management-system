@@ -20,7 +20,6 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 // استيراد النماذج
-db.User = require('./user')(sequelize, Sequelize);
 db.Contestant = require('./contestant')(sequelize, Sequelize);
 db.Supervisor = require('./supervisor')(sequelize, Sequelize);
 db.Competition = require('./competition')(sequelize, Sequelize);
