@@ -53,25 +53,44 @@ Built by https://www.blackbox.ai
 بعد اكتمال النشر، قم بإنشاء المستخدم الأول (المسؤول) عن طريق:
 
 1. افتح موجه الأوامر في Render.com للتطبيق
-2. نفذ الأمر التالي:
+2. قم بإنشاء ملف مؤقت باسم `createAdmin.js` بالمحتوى التالي:
    ```javascript
-   node
+   require('dotenv').config();
    const { User } = require('./models');
    const bcrypt = require('bcryptjs');
    
    async function createAdmin() {
-     const hashedPassword = await bcrypt.hash('كلمة_المرور_هنا', 10);
-     await User.create({
-       username: 'admin',
-       password: hashedPassword,
-       role: 'admin',
-       fullName: 'مدير النظام',
-       isActive: true
-     });
+     try {
+       const hashedPassword = await bcrypt.hash('admin123', 10);
+       const admin = await User.create({
+         username: 'admin',
+         password: hashedPassword,
+         role: 'admin',
+         fullName: 'مدير النظام',
+         isActive: true
+       });
+       console.log('تم إنشاء المستخدم بنجاح:', admin.username);
+       process.exit(0);
+     } catch (error) {
+       console.error('خطأ في إنشاء المستخدم:', error);
+       process.exit(1);
+     }
    }
    
    createAdmin();
    ```
+
+3. قم بتنفيذ الملف:
+   ```bash
+   node createAdmin.js
+   ```
+
+4. انتظر حتى ترى رسالة نجاح العملية
+5. يمكنك الآن تسجيل الدخول باستخدام:
+   - اسم المستخدم: admin
+   - كلمة المرور: admin123
+
+6. قم بتغيير كلمة المرور فوراً بعد تسجيل الدخول الأول
 
 ### 4. الوصول إلى التطبيق
 
