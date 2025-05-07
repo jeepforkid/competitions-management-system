@@ -23,45 +23,29 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 
 // إعداد الجلسات
-app.use(session({
-    secret: config.sessionSecret,
-    resave: false,
-    saveUninitialized: false
-}));
+// تم تعطيل ميزة الجلسات والمصادقة
 
 // إعداد الرسائل الفلاشية
 app.use(flash());
 
 // متغيرات عامة للقوالب
 app.use((req, res, next) => {
-    res.locals.user = req.session.user;
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
     next();
 });
 
-// التحقق من المصادقة
-const ensureAuthenticated = (req, res, next) => {
-    if (req.session.user) {
-        return next();
-    }
-    req.flash('error_msg', 'يرجى تسجيل الدخول للوصول إلى هذه الصفحة');
-    res.redirect('/auth/login');
-};
-
 // استيراد المسارات
-const authRoutes = require('./routes/auth');
 const contestantRoutes = require('./routes/contestants');
 const supervisorRoutes = require('./routes/supervisors');
 const competitionRoutes = require('./routes/competitions');
 const scoreRoutes = require('./routes/scores');
 
-// تسجيل المسارات
-app.use('/auth', authRoutes);
-app.use('/contestants', ensureAuthenticated, contestantRoutes);
-app.use('/supervisors', ensureAuthenticated, supervisorRoutes);
-app.use('/competitions', ensureAuthenticated, competitionRoutes);
-app.use('/scores', ensureAuthenticated, scoreRoutes);
+// تسجيل المسارات بدون تحقق المصادقة
+app.use('/contestants', contestantRoutes);
+app.use('/supervisors', supervisorRoutes);
+app.use('/competitions', competitionRoutes);
+app.use('/scores', scoreRoutes);
 
 // توجيه الصفحة الرئيسية إلى صفحة الدرجات
 app.get('/', (req, res) => {
