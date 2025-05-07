@@ -1,15 +1,41 @@
 
-Built by https://www.blackbox.ai
-
----
-
 # نظام إدارة المسابقات والمتسابقات
 
 نظام متكامل لإدارة المسابقات والمتسابقات والمشرفات مع دعم كامل للغة العربية.
 
 ## التثبيت المحلي
 
-راجع قسم [Installation](#installation) أدناه للتثبيت المحلي.
+1. **نسخ المستودع**:
+   ```bash
+   git clone https://github.com/yourusername/competitions-management-system.git
+   cd competitions-management-system
+   ```
+
+2. **تثبيت التبعيات**:
+   ```bash
+   npm install
+   ```
+
+3. **إنشاء ملف `.env`** في المجلد الرئيسي:
+   ```
+   PORT=3000
+   DATABASE_URL=your_database_url
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=your_database_name
+   DB_USER=your_database_user
+   DB_PASSWORD=your_database_password
+   ```
+
+4. **تشغيل التطبيق**:
+   ```bash
+   npm start
+   ```
+
+   للتطوير، يمكنك استخدام:
+   ```bash
+   npm run dev
+   ```
 
 ## التثبيت على Render.com
 
@@ -48,82 +74,17 @@ Built by https://www.blackbox.ai
 
 6. انقر على "Create Web Service"
 
-### 3. إعداد المستخدم الأول
+### 3. الوصول إلى التطبيق
 
-بعد اكتمال النشر، قم بإنشاء المستخدم الأول (المسؤول) عن طريق:
-
-1. في لوحة تحكم Render.com، اذهب إلى Web Service الخاص بالتطبيق
-2. انقر على زر "Shell" في القائمة العلوية
-3. في نافذة Shell، قم بتنفيذ الأوامر التالية مباشرة:
-   ```bash
-   node
-   ```
-   
-4. بعد ظهور موجه Node.js (>)، قم بتنفيذ الأوامر التالية لإعادة تعيين كلمة المرور:
-   ```javascript
-   const db = require('./models')
-   const bcrypt = require('bcryptjs')
-   
-   // البحث عن المستخدم
-   const user = await db.User.findOne({ where: { username: 'admin' } })
-   console.log('تم العثور على المستخدم:', user ? 'نعم' : 'لا')
-   
-   if (user) {
-     // تعيين كلمة مرور جديدة
-     const newPassword = 'admin123'
-     const hashedPassword = await bcrypt.hash(newPassword, 10)
-     await user.update({ password: hashedPassword })
-     console.log('تم تحديث كلمة المرور بنجاح')
-     console.log('كلمة المرور الجديدة هي:', newPassword)
-   } else {
-     // إنشاء مستخدم جديد
-     const newPassword = 'admin123'
-     const hashedPassword = await bcrypt.hash(newPassword, 10)
-     const newUser = await db.User.create({
-       username: 'admin',
-       password: hashedPassword,
-       role: 'admin',
-       fullName: 'مدير النظام',
-       isActive: true
-     })
-     console.log('تم إنشاء مستخدم جديد')
-     console.log('اسم المستخدم:', newUser.username)
-     console.log('كلمة المرور:', newPassword)
-   }
-   
-   // التأكد من صحة كلمة المرور
-   const testUser = await db.User.findOne({ where: { username: 'admin' } })
-   const isValid = await bcrypt.compare('admin123', testUser.password)
-   console.log('تم التحقق من كلمة المرور:', isValid ? 'صحيحة' : 'غير صحيحة')
-   ```
-
-5. للخروج من موجه Node.js، اضغط:
-   - CTRL + C مرتين، أو
-   - اكتب `.exit` واضغط Enter
-
-6. يمكنك الآن تسجيل الدخول باستخدام:
-   - اسم المستخدم: admin
-   - كلمة المرور: admin123
-
-7. قم بتغيير كلمة المرور فوراً بعد تسجيل الدخول الأول
-
-ملاحظة: إذا ظهرت رسالة خطأ تفيد بأن المستخدم موجود مسبقاً، يمكنك تجربة تسجيل الدخول مباشرة بالبيانات المذكورة أعلاه.
-
-### 4. الوصول إلى التطبيق
-
-- يمكنك الآن الوصول إلى التطبيق عبر الرابط الذي يوفره Render.com
-- سجل الدخول باستخدام:
-  - اسم المستخدم: admin
-  - كلمة المرور: [كلمة المرور التي اخترتها]
+بعد اكتمال النشر، يمكنك الوصول إلى التطبيق عبر الرابط الذي يوفره Render.com.
 
 ### ملاحظات مهمة للنشر
 
-- تأكد من أن المتغيرات البيئية صحيحة وآمنة
-- قم بتغيير كلمة مرور المسؤول بعد أول تسجيل دخول
+- تأكد من أن المتغيرات البيئية صحيحة
 - قم بإنشاء نسخة احتياطية لقاعدة البيانات بشكل دوري
 - راجع سجلات التطبيق في Render.com لمتابعة أي أخطاء محتملة
 
-## Project Overview
+## نظرة عامة على المشروع
 
 The Competitions Management System is a web application designed to manage competitions and contestants effectively. It allows for user authentication, session management, and the handling of competition-related data. Built using Express.js and EJS for the frontend, the application is designed to streamline the process of managing competitions.
 
