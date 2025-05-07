@@ -3,9 +3,89 @@ Built by https://www.blackbox.ai
 
 ---
 
-# Competitions Management System
+# نظام إدارة المسابقات والمتسابقات
 
-نظام إدارة المسابقات والمتسابقات
+نظام متكامل لإدارة المسابقات والمتسابقات والمشرفات مع دعم كامل للغة العربية.
+
+## التثبيت المحلي
+
+راجع قسم [Installation](#installation) أدناه للتثبيت المحلي.
+
+## التثبيت على Render.com
+
+### 1. إعداد قاعدة البيانات
+
+1. قم بتسجيل الدخول إلى [Render.com](https://render.com)
+2. اذهب إلى لوحة التحكم
+3. انقر على "New +" واختر "PostgreSQL"
+4. املأ المعلومات التالية:
+   - Name: competitions-db (أو أي اسم تختاره)
+   - Database: competitions
+   - User: competitions_user
+   - Region: اختر أقرب منطقة لك
+5. انقر على "Create Database"
+6. احتفظ برابط الاتصال (Internal Database URL) لاستخدامه لاحقاً
+
+### 2. تثبيت التطبيق
+
+1. من لوحة التحكم في Render.com، انقر على "New +" واختر "Web Service"
+2. اختر "Build and deploy from a Git repository"
+3. اختر مستودع GitHub الخاص بالمشروع
+4. املأ المعلومات التالية:
+   - Name: competitions-app (أو أي اسم تختاره)
+   - Region: نفس منطقة قاعدة البيانات
+   - Branch: main
+   - Runtime: Node
+   - Build Command: `npm install`
+   - Start Command: `node app.js`
+
+5. أضف المتغيرات البيئية التالية:
+   ```
+   DATABASE_URL=[رابط قاعدة البيانات الذي حصلت عليه]
+   NODE_ENV=production
+   SESSION_SECRET=[مفتاح عشوائي آمن]
+   ```
+
+6. انقر على "Create Web Service"
+
+### 3. إعداد المستخدم الأول
+
+بعد اكتمال النشر، قم بإنشاء المستخدم الأول (المسؤول) عن طريق:
+
+1. افتح موجه الأوامر في Render.com للتطبيق
+2. نفذ الأمر التالي:
+   ```javascript
+   node
+   const { User } = require('./models');
+   const bcrypt = require('bcryptjs');
+   
+   async function createAdmin() {
+     const hashedPassword = await bcrypt.hash('كلمة_المرور_هنا', 10);
+     await User.create({
+       username: 'admin',
+       password: hashedPassword,
+       role: 'admin',
+       fullName: 'مدير النظام',
+       isActive: true
+     });
+   }
+   
+   createAdmin();
+   ```
+
+### 4. الوصول إلى التطبيق
+
+- يمكنك الآن الوصول إلى التطبيق عبر الرابط الذي يوفره Render.com
+- سجل الدخول باستخدام:
+  - اسم المستخدم: admin
+  - كلمة المرور: [كلمة المرور التي اخترتها]
+
+### ملاحظات مهمة للنشر
+
+- تأكد من أن المتغيرات البيئية صحيحة وآمنة
+- قم بتغيير كلمة مرور المسؤول بعد أول تسجيل دخول
+- قم بإنشاء نسخة احتياطية لقاعدة البيانات بشكل دوري
+- راجع سجلات التطبيق في Render.com لمتابعة أي أخطاء محتملة
 
 ## Project Overview
 
