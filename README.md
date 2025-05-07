@@ -59,18 +59,26 @@ Built by https://www.blackbox.ai
    node
    ```
    
-4. بعد ظهور موجه Node.js (>)، قم بتنفيذ الأوامر التالية واحداً تلو الآخر للتحقق من المستخدم الحالي وإنشاء مستخدم جديد إذا لزم الأمر:
+4. بعد ظهور موجه Node.js (>)، قم بتنفيذ الأوامر التالية لإعادة تعيين كلمة المرور:
    ```javascript
    const db = require('./models')
+   const bcrypt = require('bcryptjs')
    
-   // التحقق من المستخدم الحالي
-   const existingUser = await db.User.findOne({ where: { username: 'admin' } })
-   console.log('المستخدم الحالي:', existingUser ? existingUser.username : 'لا يوجد')
+   // البحث عن المستخدم
+   const user = await db.User.findOne({ where: { username: 'admin' } })
+   console.log('تم العثور على المستخدم:', user ? 'نعم' : 'لا')
    
-   if (!existingUser) {
+   if (user) {
+     // تعيين كلمة مرور جديدة
+     const newPassword = 'admin123'
+     const hashedPassword = await bcrypt.hash(newPassword, 10)
+     await user.update({ password: hashedPassword })
+     console.log('تم تحديث كلمة المرور بنجاح')
+     console.log('كلمة المرور الجديدة هي:', newPassword)
+   } else {
      // إنشاء مستخدم جديد
-     const bcrypt = require('bcryptjs')
-     const hashedPassword = await bcrypt.hash('admin123', 10)
+     const newPassword = 'admin123'
+     const hashedPassword = await bcrypt.hash(newPassword, 10)
      const newUser = await db.User.create({
        username: 'admin',
        password: hashedPassword,
@@ -78,20 +86,15 @@ Built by https://www.blackbox.ai
        fullName: 'مدير النظام',
        isActive: true
      })
-     console.log('تم إنشاء المستخدم الجديد:', newUser.username)
-   } else {
-     // تحديث كلمة المرور للمستخدم الحالي
-     const bcrypt = require('bcryptjs')
-     const hashedPassword = await bcrypt.hash('admin123', 10)
-     await existingUser.update({ password: hashedPassword })
-     console.log('تم تحديث كلمة المرور للمستخدم:', existingUser.username)
+     console.log('تم إنشاء مستخدم جديد')
+     console.log('اسم المستخدم:', newUser.username)
+     console.log('كلمة المرور:', newPassword)
    }
    
-   // التحقق من صحة تسجيل الدخول
+   // التأكد من صحة كلمة المرور
    const testUser = await db.User.findOne({ where: { username: 'admin' } })
-   const bcrypt = require('bcryptjs')
-   const isValidPassword = await bcrypt.compare('admin123', testUser.password)
-   console.log('هل كلمة المرور صحيحة؟', isValidPassword ? 'نعم' : 'لا')
+   const isValid = await bcrypt.compare('admin123', testUser.password)
+   console.log('تم التحقق من كلمة المرور:', isValid ? 'صحيحة' : 'غير صحيحة')
    ```
 
 5. للخروج من موجه Node.js، اضغط:
