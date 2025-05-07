@@ -54,48 +54,57 @@ Built by https://www.blackbox.ai
 
 1. في لوحة تحكم Render.com، اذهب إلى Web Service الخاص بالتطبيق
 2. انقر على زر "Shell" في القائمة العلوية
-3. في نافذة Shell، قم بإنشاء وتحرير الملف باستخدام الأمر التالي:
+3. في نافذة Shell، قم بتنفيذ الأوامر التالية مباشرة:
    ```bash
-   nano createAdmin.js
+   node
    ```
-4. انسخ والصق المحتوى التالي في المحرر (استخدم CTRL+SHIFT+V للصق):
-   ```javascript
-   require('dotenv').config();
-   const { User } = require('./models');
-   const bcrypt = require('bcryptjs');
    
-   async function createAdmin() {
-     try {
-       const hashedPassword = await bcrypt.hash('admin123', 10);
-       const admin = await User.create({
-         username: 'admin',
-         password: hashedPassword,
-         role: 'admin',
-         fullName: 'مدير النظام',
-         isActive: true
-       });
-       console.log('تم إنشاء المستخدم بنجاح:', admin.username);
-       process.exit(0);
-     } catch (error) {
-       console.error('خطأ في إنشاء المستخدم:', error);
-       process.exit(1);
-     }
+4. بعد ظهور موجه Node.js (>)، قم بتنفيذ الأوامر التالية واحداً تلو الآخر للتحقق من المستخدم الحالي وإنشاء مستخدم جديد إذا لزم الأمر:
+   ```javascript
+   const db = require('./models')
+   
+   // التحقق من المستخدم الحالي
+   const existingUser = await db.User.findOne({ where: { username: 'admin' } })
+   console.log('المستخدم الحالي:', existingUser ? existingUser.username : 'لا يوجد')
+   
+   if (!existingUser) {
+     // إنشاء مستخدم جديد
+     const bcrypt = require('bcryptjs')
+     const hashedPassword = await bcrypt.hash('admin123', 10)
+     const newUser = await db.User.create({
+       username: 'admin',
+       password: hashedPassword,
+       role: 'admin',
+       fullName: 'مدير النظام',
+       isActive: true
+     })
+     console.log('تم إنشاء المستخدم الجديد:', newUser.username)
+   } else {
+     // تحديث كلمة المرور للمستخدم الحالي
+     const bcrypt = require('bcryptjs')
+     const hashedPassword = await bcrypt.hash('admin123', 10)
+     await existingUser.update({ password: hashedPassword })
+     console.log('تم تحديث كلمة المرور للمستخدم:', existingUser.username)
    }
    
-   createAdmin();
+   // التحقق من صحة تسجيل الدخول
+   const testUser = await db.User.findOne({ where: { username: 'admin' } })
+   const bcrypt = require('bcryptjs')
+   const isValidPassword = await bcrypt.compare('admin123', testUser.password)
+   console.log('هل كلمة المرور صحيحة؟', isValidPassword ? 'نعم' : 'لا')
    ```
 
-3. قم بتنفيذ الملف:
-   ```bash
-   node createAdmin.js
-   ```
+5. للخروج من موجه Node.js، اضغط:
+   - CTRL + C مرتين، أو
+   - اكتب `.exit` واضغط Enter
 
-4. انتظر حتى ترى رسالة نجاح العملية
-5. يمكنك الآن تسجيل الدخول باستخدام:
+6. يمكنك الآن تسجيل الدخول باستخدام:
    - اسم المستخدم: admin
    - كلمة المرور: admin123
 
-6. قم بتغيير كلمة المرور فوراً بعد تسجيل الدخول الأول
+7. قم بتغيير كلمة المرور فوراً بعد تسجيل الدخول الأول
+
+ملاحظة: إذا ظهرت رسالة خطأ تفيد بأن المستخدم موجود مسبقاً، يمكنك تجربة تسجيل الدخول مباشرة بالبيانات المذكورة أعلاه.
 
 ### 4. الوصول إلى التطبيق
 
